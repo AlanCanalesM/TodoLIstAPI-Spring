@@ -6,6 +6,9 @@ import com.spring.todo.api.todolistapi.repositories.ItemRepository;
 import com.spring.todo.api.todolistapi.entity.Item;
 import java.util.*;
 
+    // This class is used to implement the business logic
+    // it injects the ItemRepository interface to access the database with its defined methods
+
 @Service
 public class ItemService {
 
