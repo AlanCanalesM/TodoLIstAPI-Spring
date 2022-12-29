@@ -2,6 +2,8 @@ package com.spring.todo.api.todolistapi.repositories;
 
 import com.spring.todo.api.todolistapi.entity.Item;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 
 
@@ -12,8 +14,9 @@ import org.springframework.data.repository.CrudRepository;
 public interface ItemRepository extends CrudRepository<Item, Integer>{
 
     //This method is used to get the item by status from the database using GET Method
-    public Iterable<Item> findByStatus(String status);
+    public List<Item> findByStatus(String status);
 
+    public List<Item> findAll();
     public Item findById(int id);
 
    

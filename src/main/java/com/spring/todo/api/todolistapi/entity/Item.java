@@ -25,7 +25,10 @@ public class Item {
     @Column(name = "status")
     private String status;
 
-    
+
+    // This is a default constructor
+    public Item() {
+    }
 
 
 }

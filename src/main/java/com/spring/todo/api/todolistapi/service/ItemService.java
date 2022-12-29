@@ -1,6 +1,9 @@
 package com.spring.todo.api.todolistapi.service;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -26,7 +29,7 @@ public class ItemService {
     }
 
     // This method is used to get all the items from the database using GET Method
-    public Iterable<Item> getAllItems() {
+    public List<Item> getAllItems() {
         return itemRepository.findAll();
     }
 
@@ -37,13 +40,13 @@ public class ItemService {
 
     // This method is used to get the item by status from the database using GET
     // Method
-    public Iterable<Item> getItemByStatus(String status) {
+    public List<Item> getItemByStatus(String status) {
         return itemRepository.findByStatus(status);
     }
 
     // This method updates the item in the database using PUT Method
     public Item updateItem(Item item) {
-        System.out.println("Updates");
+        System.out.println("Updated");
         Item itemToUpdate = itemRepository.findById(item.getId());
         itemToUpdate.setItem(item.getItem());
         itemToUpdate.setStatus(item.getStatus());
@@ -53,7 +56,7 @@ public class ItemService {
     // This method deletes the item by id using DELETE Method
     public String deleteItem(int id) {
         itemRepository.deleteById(id);
-        return id + "id -> item deleted";
+        return id + " id -> item deleted";
     }
 
 }

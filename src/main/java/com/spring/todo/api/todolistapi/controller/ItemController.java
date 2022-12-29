@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 
 import com.spring.todo.api.todolistapi.service.ItemService;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +39,7 @@ public class ItemController {
 
     // GET
     @GetMapping("/getAllItems")
-    public Iterable<Item> getAllItems() {
+    public List<Item> getAllItems() {
         return itemService.getAllItems();
     }
 
@@ -46,7 +49,7 @@ public class ItemController {
     }
 
     @GetMapping("/getItemByStatus/{status}")
-    public Iterable<Item> getItemByStatus(@PathVariable String status) {
+    public List<Item> getItemByStatus(@PathVariable String status) {
         return itemService.getItemByStatus(status);
     }
 
