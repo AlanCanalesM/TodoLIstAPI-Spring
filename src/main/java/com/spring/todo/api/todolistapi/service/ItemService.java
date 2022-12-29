@@ -2,18 +2,22 @@ package com.spring.todo.api.todolistapi.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+
+
 import com.spring.todo.api.todolistapi.repositories.ItemRepository;
 import com.spring.todo.api.todolistapi.entity.Item;
-import java.util.*;
 
-    // This class is used to implement the business logic
-    // it injects the ItemRepository interface to access the database with its defined methods
+
+// This class is used to implement the business logic
+// it injects the ItemRepository interface to access the database with its defined methods
 
 @Service
 public class ItemService {
 
     @Autowired
     private ItemRepository itemRepository;
+
+
 
     // This method is used to save the item in the database using POST Method
     public Item saveItem(Item item) {
@@ -22,7 +26,7 @@ public class ItemService {
     }
 
     // This method is used to get all the items from the database using GET Method
-    public List<Item> getAllItems() {
+    public Iterable<Item> getAllItems() {
         return itemRepository.findAll();
     }
 
@@ -33,7 +37,7 @@ public class ItemService {
 
     // This method is used to get the item by status from the database using GET
     // Method
-    public List<Item> getItemByStatus(String status) {
+    public Iterable<Item> getItemByStatus(String status) {
         return itemRepository.findByStatus(status);
     }
 
