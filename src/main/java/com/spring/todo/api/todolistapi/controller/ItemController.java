@@ -1,9 +1,7 @@
 package com.spring.todo.api.todolistapi.controller;
 
-
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 import com.spring.todo.api.todolistapi.service.ItemService;
 
@@ -14,10 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import com.spring.todo.api.todolistapi.entity.Item;
 
-
 // This class works as a controller to handle the requests and responses
 // it creates the endpoints and injects the ItemService class to access the business logic
-
 
 @RestController
 @RequestMapping(ItemController.BASE_URL)

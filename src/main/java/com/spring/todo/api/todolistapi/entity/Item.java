@@ -4,8 +4,6 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import jakarta.persistence.*;
 
-
-
 // This class is used to define the structure of the table in the database and the fields in the table
 // it also defines the arguments to each item in the table
 
@@ -25,10 +23,8 @@ public class Item {
     @Column(name = "status")
     private String status;
 
-
     // This is a default constructor
     public Item() {
     }
-
 
 }
