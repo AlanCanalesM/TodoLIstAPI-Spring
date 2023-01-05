@@ -54,6 +54,52 @@ If you dont have these things, you can install them following their docs.
 
 To test this project you have to run the file "TodolistapiApplication.java" and try to execute the following curl's commands in your terminal
 
+- To get all the items
+  ```sh
+  curl --location --request GET 'http://localhost:8080/api/v1/items/getAllItems' \
+  --data-raw ''
+  ```
+
+- To get items by id
+  ```sh
+  curl --location --request GET 'http://localhost:8080/api/v1/items/getItemById/1'
+  ```
+- To get items by status
+  ```sh
+  curl --location --request GET 'http://localhost:8080/api/v1/items/getItemByStatus/active'
+  ```
+- To save a new Item
+  ```sh
+  curl --location --request POST 'http://localhost:8080/api/v1/items/saveItems' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "item": 3,
+    "status": "active"
+  }'
+  ```
+- To update an item
+  ```sh
+  curl --location --request PUT 'http://localhost:8080/api/v1/items/updateItem' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+    "id": 3,
+    "item": "tercer item",
+    "status": "unactive"
+  }'
+  ```
+- To delete an item
+  ```sh
+  curl --location --request DELETE 'http://localhost:8080/api/v1/items/deleteItem/3'
+  ```
+
+## Usage
+
+You can use this project to add, read, update and delete any kind of item from a database 
+
+## Manteiners
+- [Alan Canales](https://github.com/AlanCanalesM)
+
+
 
 
 
