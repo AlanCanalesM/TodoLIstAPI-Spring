@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.spring.todo.api.todolistapi.service.ItemService;
 
+import jakarta.validation.constraints.Null;
+
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import com.spring.todo.api.todolistapi.Exceptions.ItemNotFoundException;
+import com.spring.todo.api.todolistapi.Exceptions.ItemWithoutAllParamsException;
 import com.spring.todo.api.todolistapi.entity.Item;
 
 // This class works as a controller to handle the requests and responses
@@ -30,14 +33,28 @@ public class ItemController {
 
     // POST
     @PostMapping("/saveItems")
-    public Item saveItem(@RequestBody Item item) {
+    public Item saveItem(@RequestBody Item item) throws ItemWithoutAllParamsException{
         logger.info("ItemController.saveItem(): " + item.toString());
-        return itemService.saveItem(item);
+        Item item1 = itemService.getItemById(item.getId());
+        if(item.getItem() == null || item.getStatus() == null){
+            throw new ItemWithoutAllParamsException("Bad Request");
+        }else if(item1 != null){
+            throw new ItemWithoutAllParamsException("Item already exists, it can't be created");
+
+        }else{
+            return itemService.saveItem(item);
+        }
+        
+        
     }
 
     // GET
     @GetMapping("/getAllItems")
     public List<Item> getAllItems() {
+        List<Item> item = itemService.getAllItems();
+        if (item == null) {
+            throw new ItemNotFoundException("Items not found");
+        }
         return itemService.getAllItems();
     }
 
@@ -56,21 +73,44 @@ public class ItemController {
     }
 
     @GetMapping("/getItemByStatus/{status}")
-    public List<Item> getItemByStatus(@PathVariable String status) {
+    public List<Item> getItemByStatus(@PathVariable String status) throws ItemNotFoundException{
+
+        List<Item> item = itemService.getItemByStatus(status);
+        if (item.isEmpty()) {
+            throw new ItemNotFoundException("Items not found for this status :: " + status);
+        }
         return itemService.getItemByStatus(status);
     }
 
     // PUT
     @PutMapping("/updateItem")
-    public Item updateItem(@RequestBody Item item) {
+    public Item updateItem(@RequestBody Item item) throws ItemNotFoundException, ItemWithoutAllParamsException {
         System.out.println("Updated");
-        return itemService.updateItem(item);
+        if(item.getId() == 0 || item.getItem() == null || item.getStatus() == null){
+            throw new ItemWithoutAllParamsException("Bad Request");
+        }else{
+            
+            if (itemService.updateItem(item) == null) {
+                throw new ItemNotFoundException("Item not found for this id :: " + item.getId());
+            }
+            return itemService.updateItem(item);
+            
+            
+        }
+        
+        
     }
 
     // DELETE
     @DeleteMapping("/deleteItem/{id}")
-    public String deleteItem(@PathVariable int id) {
-        return itemService.deleteItem(id);
+    public String deleteItem(@PathVariable int id) throws ItemNotFoundException{
+
+            
+            if (itemService.deleteItem(id) == null) {
+                throw new ItemNotFoundException("Item not found for this id :: " + id);
+            }
+            return itemService.deleteItem(id);
+        
     }
 
 }

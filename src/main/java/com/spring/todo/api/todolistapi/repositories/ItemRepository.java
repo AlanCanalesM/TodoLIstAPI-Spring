@@ -17,5 +17,7 @@ public interface ItemRepository extends CrudRepository<Item, Integer> {
     public List<Item> findAll();
 
     public Item findById(int id);
+    
+    public String deleteById(int id);
 
 }

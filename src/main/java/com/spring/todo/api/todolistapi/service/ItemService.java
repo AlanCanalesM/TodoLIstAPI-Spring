@@ -56,7 +56,7 @@ public class ItemService {
     // This method deletes the item by id using DELETE Method
     public String deleteItem(int id) {
         itemRepository.deleteById(id);
-        return id + " id -> item deleted";
+        return id + " id item deleted";
     }
 
 }
