@@ -1,6 +1,7 @@
 package com.spring.todo.api.todolistapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.todo.api.todolistapi.Exceptions.ItemNotFoundException;
 import com.spring.todo.api.todolistapi.controller.ItemController;
 import com.spring.todo.api.todolistapi.service.ItemService;
 import org.mockito.Mockito;
@@ -259,10 +260,11 @@ public class TestItemService {
         // and expects a 404 NOT FOUND status code
 
         @Test
-        public void testUpdateItemWithNonExistentId() throws Exception {
+        public void testUpdateItemWithNonExistentId() throws ItemNotFoundException, Exception {
+                Mockito.when(itemService.updateItem(Mockito.any(Item.class))).thenThrow(new ItemNotFoundException("Item not found"));
                 RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1/items/updateItem")
                                 .accept(MediaType.APPLICATION_JSON)
-                                .content("{\"id\":71830,\"item\":\"Test Item\",\"status\":\"Test status\"}")
+                                .content("{\"id\":718300,\"item\":\"Test Item\",\"status\":\"Test status\"}")
                                 .contentType(MediaType.APPLICATION_JSON);
                 MvcResult result = mockMvc.perform(requestBuilder).andReturn();
                 MockHttpServletResponse response = result.getResponse();

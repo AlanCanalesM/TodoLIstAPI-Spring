@@ -2,6 +2,7 @@ package com.spring.todo.api.todolistapi.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
 import com.spring.todo.api.todolistapi.service.ItemService;
 
@@ -90,10 +91,17 @@ public class ItemController {
             throw new ItemWithoutAllParamsException("Bad Request");
         }else{
             
-            if (itemService.updateItem(item) == null) {
+            // if (itemService.updateItem(item) == null) {
+            //     throw new ItemNotFoundException("Item not found for this id :: " + item.getId());
+            // }
+            try{
+                Item itemupdated = itemService.updateItem(item);
+                return itemupdated;
+                }
+            catch(Exception e){
+                
                 throw new ItemNotFoundException("Item not found for this id :: " + item.getId());
             }
-            return itemService.updateItem(item);
             
             
         }
