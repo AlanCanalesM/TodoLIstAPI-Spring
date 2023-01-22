@@ -12,8 +12,8 @@ import java.util.Arrays;
 import com.spring.todo.api.todolistapi.entity.User;
 import com.spring.todo.api.todolistapi.repositories.UserRepository;
 
+// This class is used to initialize the database with some test data.
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
@@ -22,6 +22,7 @@ public class DataInitializer implements CommandLineRunner {
     
     private final PasswordEncoder passwordEncoder;
 
+    // This method saves two users to the database.
     @Override
     public void run(String... args) throws Exception {
         this.users.save(User.builder()

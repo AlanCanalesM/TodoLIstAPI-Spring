@@ -20,23 +20,33 @@ import java.util.Map;
 
 import static org.springframework.http.ResponseEntity.ok;
 
+// This class is used to authenticate the user and generate a JWT token.
+// It uses the AuthenticationManager to authenticate the user and the JwtTokenProvider to generate the JWT token.
+
 @RestController
-@RequestMapping("/auth")
+@RequestMapping(AuthController.BASE_URL)
 @RequiredArgsConstructor
-public class AuthController  {
+public class AuthController {
+
+    public static final String BASE_URL = "/api/v1/items";
 
     private final AuthenticationManager authenticationManager;
-    
+
     private final JwtTokenProvider jwtTokenProvider;
-    
-    private final UserRepository users;
-    
+
+    // This method creates and endpoint for the user to authenticate.
+    // It takes the username and password from the request body and uses the
+    // AuthenticationManager to authenticate the user.
+    // If the user is authenticated successfully, it generates a JWT token using the
+    // JwtTokenProvider.
+    // It then returns the username and the token in the response body.
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody AuthenticationRequest data) {
-        
+
         try {
             String username = data.getUsername();
-            var authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
+            var authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
             String token = jwtTokenProvider.createToken(authentication);
             Map<Object, Object> model = new HashMap<>();
             model.put("username", username);
@@ -46,5 +56,5 @@ public class AuthController  {
             throw new BadCredentialsException("Invalid username/password supplied");
         }
     }
-    
+
 }

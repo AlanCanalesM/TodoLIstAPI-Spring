@@ -1,9 +1,7 @@
 package com.spring.todo.api.todolistapi.Security;
 
-import com.spring.todo.api.todolistapi.Security.JwtTokenAuthenticationFilter;
 import com.spring.todo.api.todolistapi.repositories.UserRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,14 +20,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
+// This class is used to configure the security of the application
 @Configuration
-public class SecurityConfig{
+public class SecurityConfig {
 
+    // It defines which endpoints are public and which are private
+    // It also defines which roles can access which endpoints
     @Bean
     SecurityFilterChain springWebFilterChain(HttpSecurity http,
-                                             JwtTokenProvider tokenProvider) throws Exception {
+            JwtTokenProvider tokenProvider) throws Exception {
         return http
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -37,20 +37,27 @@ public class SecurityConfig{
                 .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/signin").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/vehicles/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/vehicles/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/v1/vehicles/**").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(new JwtTokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/items/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/items/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/items/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/items/**").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(new JwtTokenAuthenticationFilter(tokenProvider),
+                        UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+    // This bean is used to configure the user details service
+    // Besides this bean is used to enable the spring security to use the custom
+    // user details service
 
     @Bean
     UserDetailsService customUserDetailsService(UserRepository users) {
         return (username) -> users.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Username: " + username + " not found"));
     }
+
+    // This bean is used to configure the authentication manager
+    // It returns an UsernamePasswordAuthenticationToken object
 
     @Bean
     AuthenticationManager customAuthenticationManager(UserDetailsService userDetailsService, PasswordEncoder encoder) {

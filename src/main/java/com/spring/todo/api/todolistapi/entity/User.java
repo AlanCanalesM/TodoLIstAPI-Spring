@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -24,6 +22,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
+// This class is used to store the user details in the database.
+// It implements the UserDetails interface which is used by Spring Security to store user details.
 
 @Data
 @Builder
@@ -31,8 +31,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @Entity
 @Table(name = "users_tbl")
-public class User implements UserDetails{
-    
+public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
@@ -75,5 +75,5 @@ public class User implements UserDetails{
         // TODO Auto-generated method stub
         return true;
     }
-    
+
 }
