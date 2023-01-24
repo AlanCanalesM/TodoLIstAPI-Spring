@@ -6,10 +6,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-
 import com.spring.todo.api.todolistapi.repositories.ItemRepository;
 import com.spring.todo.api.todolistapi.entity.Item;
-
 
 // This class is used to implement the business logic
 // it injects the ItemRepository interface to access the database with its defined methods
@@ -19,8 +17,6 @@ public class ItemService {
 
     @Autowired
     private ItemRepository itemRepository;
-
-
 
     // This method is used to save the item in the database using POST Method
     public Item saveItem(Item item) {

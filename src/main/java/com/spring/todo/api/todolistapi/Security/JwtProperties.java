@@ -2,10 +2,10 @@ package com.spring.todo.api.todolistapi.Security;
 
 import lombok.Data;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+// This class is used to get the jwt properties
 @Component
 @Data
 @ConfigurationProperties(prefix = "app.jwt")

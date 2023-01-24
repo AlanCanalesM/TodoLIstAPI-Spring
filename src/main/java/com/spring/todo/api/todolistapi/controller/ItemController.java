@@ -10,7 +10,6 @@ import org.springframework.security.core.AuthenticationException;
 
 import com.spring.todo.api.todolistapi.service.ItemService;
 
-import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
@@ -43,12 +42,9 @@ public class ItemController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    
-
     private final AuthenticationManager authenticationManager;
 
     private final JwtTokenProvider jwtTokenProvider;
-    
 
     // This method creates and endpoint for the user to authenticate.
     // It takes the username and password from the request body and uses the
@@ -65,7 +61,7 @@ public class ItemController {
                     .authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
             String token = jwtTokenProvider.createToken(authentication);
             Map<Object, Object> model = new HashMap<>();
-            //model.put("username", username);
+            // model.put("username", username);
             model.put("token", token);
             return ok(model);
         } catch (AuthenticationException e) {
