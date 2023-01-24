@@ -36,11 +36,11 @@ public class SecurityConfig {
                 .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/auth/signin").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/items/**").permitAll()
+                        .requestMatchers("/api/v1/items/signin").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/items/**").hasRole("USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/items/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/v1/items/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/items/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/items/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/items/**").hasRole("USER")
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtTokenAuthenticationFilter(tokenProvider),
                         UsernamePasswordAuthenticationFilter.class)

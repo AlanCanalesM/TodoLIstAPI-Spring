@@ -18,8 +18,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import java.util.*;
@@ -281,5 +282,26 @@ public class TestItemService {
                 MvcResult result = mockMvc.perform(requestBuilder).andReturn();
                 MockHttpServletResponse response = result.getResponse();
                 assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
+        }
+
+        @Test
+        public void otrapvtaprueba() throws Exception {
+
+                String username = "user";
+   String password = "password";
+
+   String body = "{\"username\":\"" + username + "\", \"password\":\""+ password + "\"}";
+
+   MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/items/signin")
+          .content(body))
+          .andExpect(status().isOk()).andReturn();
+
+   String response = result.getResponse().getContentAsString();
+   response = response.replace("{\"access_token\": \"", "");
+   String token = response.replace("\"}", "");
+
+   mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/items/getAllItems")
+      .header("Authorization", "Bearer " + token))
+      .andExpect(status().isOk());
         }
 }

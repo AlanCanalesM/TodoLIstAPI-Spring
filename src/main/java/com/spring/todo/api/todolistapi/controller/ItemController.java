@@ -3,12 +3,19 @@ package com.spring.todo.api.todolistapi.controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 
 import com.spring.todo.api.todolistapi.service.ItemService;
 
 import jakarta.validation.constraints.Null;
+import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,13 +23,17 @@ import org.springframework.web.bind.annotation.*;
 
 import com.spring.todo.api.todolistapi.Exceptions.ItemNotFoundException;
 import com.spring.todo.api.todolistapi.Exceptions.ItemWithoutAllParamsException;
+import com.spring.todo.api.todolistapi.Security.JwtTokenProvider;
+import com.spring.todo.api.todolistapi.entity.AuthenticationRequest;
 import com.spring.todo.api.todolistapi.entity.Item;
 
+import static org.springframework.http.ResponseEntity.ok;
 // This class works as a controller to handle the requests and responses
 // it creates the endpoints and injects the ItemService class to access the business logic
 
 @RestController
 @RequestMapping(ItemController.BASE_URL)
+@RequiredArgsConstructor
 public class ItemController {
 
     public static final String BASE_URL = "/api/v1/items";
@@ -31,6 +42,36 @@ public class ItemController {
     private ItemService itemService;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    
+
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtTokenProvider jwtTokenProvider;
+    
+
+    // This method creates and endpoint for the user to authenticate.
+    // It takes the username and password from the request body and uses the
+    // AuthenticationManager to authenticate the user.
+    // If the user is authenticated successfully, it generates a JWT token using the
+    // JwtTokenProvider.
+    // It then returns the username and the token in the response body.
+    @PostMapping("/signin")
+    public ResponseEntity signin(@RequestBody AuthenticationRequest data) {
+
+        try {
+            String username = data.getUsername();
+            var authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
+            String token = jwtTokenProvider.createToken(authentication);
+            Map<Object, Object> model = new HashMap<>();
+            //model.put("username", username);
+            model.put("token", token);
+            return ok(model);
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("Invalid username/password supplied");
+        }
+    }
 
     // POST
     @PostMapping("/saveItems")
