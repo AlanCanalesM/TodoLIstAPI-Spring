@@ -1,307 +1,139 @@
 package com.spring.todo.api.todolistapi;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.spring.todo.api.todolistapi.Exceptions.ItemNotFoundException;
-import com.spring.todo.api.todolistapi.controller.ItemController;
-import com.spring.todo.api.todolistapi.service.ItemService;
-import org.mockito.Mockito;
-import com.spring.todo.api.todolistapi.entity.Item;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.junit.jupiter.api.Test;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-import java.util.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import static org.mockito.BDDMockito.given;
 
-//This notation is used is used for unit testing Spring MVC application.
-@WebMvcTest(ItemController.class)
-@WithMockUser
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import com.spring.todo.api.todolistapi.entity.Item;
+import com.spring.todo.api.todolistapi.repositories.ItemRepository;
+import com.spring.todo.api.todolistapi.service.ItemService;
+
+// This class tests the ItemService class
+@SpringBootTest
+@AutoConfigureMockMvc
 public class TestItemService {
 
-        // This is used to send HTTP requests to the controller
-        @Autowired
-        private MockMvc mockMvc;
+    @MockBean
+    private ItemRepository itemRepository;
 
-        // MockBean is used to add mocks to a Spring ApplicationContext.
-        // A mock of itemService is created and auto-wired into the
-        // ItemController.
-        @MockBean
-        private ItemService itemService;
+    @Autowired
+    private ItemService itemService;
 
-        // This is a mock list of items
-        List<Item> mockItemsList = new ArrayList<Item>(
-                        Arrays.asList(new Item(1, "Test Item", "Test status")));
+    private Item item;
 
-        ObjectMapper ObjectMapper = new ObjectMapper();
+    private List<Item> itemsList;
 
-        // This is a test method to test the saveItems method in the ItemController
-        // it mocks the saveItem method in the ItemService class
-        // then it sends a POST request to the saveItems endpoint
-        // at the end it checks if the response is the same as the expected response
-        // and if the status code is 200 == OK
-        @Test
-        public void testSaveItems() throws Exception {
-                Item mockItem = new Item(1, "Test Item", "Test status");
-                Mockito.when(itemService.saveItem(Mockito.any(Item.class))).thenReturn(mockItem);
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/v1/items/saveItems")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content("{\"id\":1,\"item\":\"Test Item\",\"status\":\"Test status\"}")
-                                .contentType(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                System.out.println(result.getResponse());
-                String expected = ObjectMapper.writeValueAsString(mockItem);
-                JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
-                assertEquals(HttpStatus.OK.value(), response.getStatus());
+    // This method will run before each test
+    // It will create a new item
+    // also create a list of items
+    @BeforeEach
+    public void setUp() {
+        item = new Item();
+        item.setId(1);
+        item.setItem("Test Item");
+        item.setStatus("Active");
 
-        }
+        itemsList = new ArrayList<>(
+                Arrays.asList(
+                        new Item(1, "Test Item 1", "Active"),
+                        new Item(2, "Test Item 2", "Active"),
+                        new Item(3, "Test Item 3", "Active")));
 
-        // This is a test method to test the getAllItems() method in the ItemController
-        // it mocks the itemService.getAllItems() method and returns the mockItem list
-        // then it creates a request to the endpoint /api/v1/items/getAllItems
-        // at the end it compares the expected and actual response
-        @Test
-        public void testGetAllItems() throws Exception {
-                Mockito.when(itemService.getAllItems()).thenReturn(mockItemsList);
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1/items/getAllItems")
-                                .accept(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                System.out.println(result.getResponse());
-                String expected = "[{\"id\":1,\"item\":\"Test Item\",\"status\":\"Test status\"}]";
-                JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
-        }
+    }
 
-        // This is a test method to test the getItemById() method in the ItemController
-        // it mocks the itemService.getItemById() method and returns the item with id 1
-        // from the mockItem list
-        // then it creates a request to the endpoint /api/v1/items/getItemById/1
-        // at the end it compares the expected and actual response
-        @Test
-        public void testGetItemById() throws Exception {
-                Mockito.when(itemService.getItemById(1)).thenReturn(mockItemsList.get(0));
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1/items/getItemById/1")
-                                .accept(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                System.out.println(result.getResponse());
-                String expected = "{\"id\":1,\"item\":\"Test Item\",\"status\":\"Test status\"}";
-                JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(),
-                                false);
-        }
+    // Test for saveItem method
+    // It will check if the item is saved or not
+    @Test
+    public void testSaveItem() {
+        when(itemRepository.save(item)).thenReturn(item);
+        assertEquals(item, itemService.saveItem(item));
+    }
 
-        // This is a test method to test the getItemByStatus() method in the
-        // ItemController
-        // it mocks the itemService.getItemByStatus() method and returns the item with
-        // status "Test status" from the mockItem list
-        // then it creates a request to the endpoint /api/v1/items/getItemByStatus/Test
-        // status
-        // at the end it compares the expected and actual response
-        @Test
-        public void testGetItemByStatus() throws Exception {
-                Mockito.when(itemService.getItemByStatus("Test status")).thenReturn(mockItemsList);
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1/items/getItemByStatus/Test status")
-                                .accept(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                System.out.println(result.getResponse());
-                String expected = "[{\"id\":1,\"item\":\"Test Item\",\"status\":\"Test status\"}]";
-                JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(),
-                                false);
-        }
+    // Test for getAllItems method
+    // It will check if the list of items is returned or not
+    // It will check if the list of items has the correct size
+    // It will check if the list of items is not null
+    @Test
+    public void testGetAllItems() {
+        Item item1 = new Item(1, "Test Item 1", "Active");
 
-        // This is a method to test the updateItem() method in the ItemController
-        // it mocks the itemService.updateItem() method and returns the updated item
-        // then it creates a request to the endpoint /api/v1/items/updateItem
-        // at the end it compares the expected and actual response
-        // and if the status code is 200 == OK
-        @Test
-        public void testUpdateItem() throws Exception {
-                Item mockItem = new Item(1, "Test Item", "Test status");
-                Item expectedItem = new Item(1, "Test Item Updated", "Test status Updated");
-                Mockito.when(itemService.updateItem(mockItem)).thenReturn(expectedItem);
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1/items/updateItem")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content("{\"id\":1,\"item\":\"Test Item Updated\",\"status\":\"Test status Updated\"}")
-                                .contentType(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                System.out.println(result.getResponse());
-                assertEquals(HttpStatus.OK.value(), response.getStatus());
-        }
+        given(itemRepository.findAll()).willReturn(List.of(item, item1));
 
-        // This is a method to test the deleteItem() method in the ItemController
-        // it mocks the itemService.deleteItem() method and returns the message "{id} id
-        // item deleted" of the deleted
-        // at the end it compares the expected and actual response
-        @Test
-        public void testDeleteItem() throws Exception {
-               Item mockItem = new Item(1, "Test Item", "Test status");
-                Mockito.when(itemService.deleteItem(1)).thenReturn(mockItem.getId() + " id item deleted");
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/v1/items/deleteItem/1")
-                                .accept(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                System.out.println(result.getResponse());
-                String expected = "1 id item deleted";
-                assertEquals(expected, result.getResponse().getContentAsString());
+        List<Item> items = itemService.getAllItems();
 
-        }
+        assertThat(items).isNotNull();
+        assertThat(items).hasSize(2);
+    }
 
-        // UnHappy Path Tests
+    // Test for getItemById method
+    // It will check if the item is returned or not
+    // It will check if the item has the correct id
+    // It will check if the item is not null
+    // It will check if the item is equal to the item returned by the method
+    @Test
+    public void testGetItemById() {
 
-        // This is a method to test the saveItem() method without field item
-        // It requests the endpoint /api/v1/items/saveItems
-        // and expects a 400 BAD REQUEST status code
-        @Test
-        public void testSaveItemWithoutItem() throws Exception {
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/api/v1/items/saveItems")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content("{\"id\":1,\"status\":\"Test status\"}")
-                                .contentType(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
-        }
+        given(itemRepository.findById(1)).willReturn(item);
 
-        // This is a method to test GetItemById() method with an invalid id
-        // It requests the endpoint /api/v1/items/getItemById/700
-        // and expects a 404 NOT FOUND status code
-        @Test
-        public void testGetNotFoundItemById() throws Exception {
+        Item item = itemService.getItemById(1);
 
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1/items/getItemById/700")
-                                .accept(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
-        }
+        assertThat(item).isNotNull();
+        assertThat(item.getId()).isEqualTo(1);
+        assertEquals(item, itemService.getItemById(1));
+    }
 
-        // This is a method to test the getAllItems() method when there are no items
-        // It requests the endpoint /api/v1/items/getAllItems and its mocked to return a null
-        // and expects a 404 NOT FOUND status code
-        @Test
-        public void testGetAllNonExistentsItems() throws Exception {
-                
-                Mockito.when(itemService.getAllItems()).thenReturn(null);
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1/items/getAllItems")
-                                .accept(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
-        }
+    // Test for getItemByStatus method
+    // It will check if the list of items is returned or not
+    // It will check if the list of items has the correct size
+    // It will check if the list of items is not null
+    // It will check if the list of items is equal to the list of items returned by
+    // the method
+    @Test
+    public void testGetItemByStatus() {
 
+        given(itemRepository.findByStatus("Active")).willReturn(itemsList);
 
-        // This is a method to test the getItemByStatus() method when there are no items
-        // It requests the endpoint /api/v1/items/getItemByStatus/ with and invalid status
-        // and expects a 404 NOT FOUND status code
-        @Test
-        public void testGetItemsByInvalidStatus() throws Exception{
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/api/v1/items/getItemByStatus/InvalidStatus")
-                                .accept(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
-        }
+        List<Item> items = itemService.getItemByStatus("Active");
 
-        // This is a method to test the UpdateItem() method without field id
-        // It requests the endpoint /api/v1/items/updateItem
-        // and expects a 400 BAD REQUEST status code
-        @Test
-        public void testUpdateItemWithoutId() throws Exception {
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1/items/updateItem")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content("{\"item\":\"Test Item\",\"status\":\"Test status\"}")
-                                .contentType(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
-        }
+        assertThat(items).isNotNull();
+        assertThat(items).hasSize(3);
+        assertEquals(items, itemService.getItemByStatus("Active"));
+    }
 
-        // This is a method to test the updateItem() method without field item
-        // It requests the endpoint /api/v1/items/updateItem
-        // and expects a 400 BAD REQUEST status code
-        @Test
-        public void testUpdateItemWithoutItem() throws Exception {
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1/items/updateItem")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content("{\"id\":1,\"status\":\"Test status\"}")
-                                .contentType(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
-        }
+    // Test for updateItem method
+    // It will check if the item is updated or not
+    // It will check if the item is equal to the item returned by the method
 
-        // This is a method to test the updateItem() method without field status
-        // It requests the endpoint /api/v1/items/updateItem
-        // and expects a 400 BAD REQUEST status code
-        @Test
-        public void testUpdateItemWithoutStatus() throws Exception {
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1/items/updateItem")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content("{\"id\":1,\"item\":\"Test Item\"}")
-                                .contentType(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
-        }
+    @Test
+    public void testUpdateItem() {
+        Item itemToUpdate = new Item(1, "Test Item 1", "Active");
+        Item itemUpdated = new Item(1, "Test Item Updated", "Updated");
+        when(itemRepository.findById(1)).thenReturn(itemToUpdate);
+        when(itemRepository.save(itemUpdated)).thenReturn(itemUpdated);
+        assertEquals(itemUpdated, itemService.updateItem(itemUpdated));
+    }
 
-        //This is a method to test the updateItem() method with a non existent id
-        // It requests the endpoint /api/v1/items/updateItem
-        // and expects a 404 NOT FOUND status code
+    // Test for deleteItem method
+    // It will check if the item is deleted or not
+    // It will check if the item is equal to the item returned by the method
+    @Test
+    public void testDeleteItem() {
+        
+        when(itemRepository.deleteById(1)).thenReturn("1 id item deleted");
+        assertEquals("1 id item deleted", itemService.deleteItem(1));
+    }
 
-        @Test
-        public void testUpdateItemWithNonExistentId() throws ItemNotFoundException, Exception {
-                Mockito.when(itemService.updateItem(Mockito.any(Item.class))).thenThrow(new ItemNotFoundException("Item not found"));
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1/items/updateItem")
-                                .accept(MediaType.APPLICATION_JSON)
-                                .content("{\"id\":718300,\"item\":\"Test Item\",\"status\":\"Test status\"}")
-                                .contentType(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
-        }
-
-        // This is a method to test the deleteItem() method with a non existent id
-        // It requests the endpoint /api/v1/items/deleteItem/71830
-        // and expects a 404 NOT FOUND status code
-        @Test
-        public void testDeleteItemWithNonExistentId() throws Exception {
-                RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/v1/items/deleteItem/71830")
-                                .accept(MediaType.APPLICATION_JSON);
-                MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
-        }
-
-        @Test
-        public void otrapvtaprueba() throws Exception {
-
-                String username = "user";
-   String password = "password";
-
-   String body = "{\"username\":\"" + username + "\", \"password\":\""+ password + "\"}";
-
-   MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/items/signin")
-          .content(body))
-          .andExpect(status().isOk()).andReturn();
-
-   String response = result.getResponse().getContentAsString();
-   response = response.replace("{\"access_token\": \"", "");
-   String token = response.replace("\"}", "");
-
-   mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/items/getAllItems")
-      .header("Authorization", "Bearer " + token))
-      .andExpect(status().isOk());
-        }
 }

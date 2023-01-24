@@ -1,12 +1,17 @@
 package com.spring.todo.api.todolistapi.controller;
 
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,9 +22,11 @@ import static org.springframework.http.ResponseEntity.ok;
 // This class is used to return the user information.
 @RestController()
 @RequestMapping(UserInfoController.BASE_URL)
+@RequiredArgsConstructor
 public class UserInfoController {
 
     public static final String BASE_URL = "/api/v1/items";
+   
 
     // This method creates an endpoint to return the user information.
     // It uses the @AuthenticationPrincipal annotation to get the user information.
@@ -33,6 +40,7 @@ public class UserInfoController {
                 .stream()
                 .map(a -> ((GrantedAuthority) a).getAuthority())
                 .collect(toList()));
+                
         return ok(model);
     }
 

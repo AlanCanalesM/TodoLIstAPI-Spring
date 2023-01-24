@@ -56,6 +56,6 @@ public class JwtTokenAuthenticationFilter extends GenericFilterBean {
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(HEADER_PREFIX)) {
             return bearerToken.substring(7);
         }
-        return null;
+        return bearerToken;
     }
 }

@@ -79,6 +79,7 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
+
     // This method is used to validate the JWT token and catch any exceptions.
     // it returns true if the token is valid, otherwise it returns false.
     public boolean validateToken(String token) {
