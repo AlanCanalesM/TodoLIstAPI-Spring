@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +20,7 @@ import static org.springframework.http.ResponseEntity.ok;
 // This class is used to return the user information.
 @RestController()
 @RequestMapping(UserInfoController.BASE_URL)
-@RequiredArgsConstructor
+@Tag(name = "book service", description = "the book API with description tag annotation")
 public class UserInfoController {
 
     public static final String BASE_URL = "/api/v1/items";
