@@ -10,6 +10,8 @@ import org.springframework.security.core.AuthenticationException;
 
 import com.spring.todo.api.todolistapi.service.ItemService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
@@ -86,6 +88,7 @@ public class ItemController {
     }
 
     // GET
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @GetMapping("/getAllItems")
     public List<Item> getAllItems() {
         List<Item> item = itemService.getAllItems();
