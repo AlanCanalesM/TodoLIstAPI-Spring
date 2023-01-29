@@ -130,6 +130,11 @@
    <version>20201115</version>
  </dependency>
 
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>1.0.0.GA</version>
+</dependency>
  
     <dependency>
       <groupId>org.springdoc</groupId>

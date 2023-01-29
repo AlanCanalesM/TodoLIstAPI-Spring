@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class ItemController {
     // JwtTokenProvider.
     // It then returns the username and the token in the response body.
     @PostMapping("/signin")
-    public ResponseEntity signin(@RequestBody AuthenticationRequest data) {
+    public ResponseEntity signin(@Valid @RequestBody AuthenticationRequest data) {
 
         try {
             String username = data.getUsername();
@@ -84,7 +85,7 @@ public class ItemController {
     })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @PostMapping("/saveItems")
-    public Item saveItem(@RequestBody Item item) throws ItemWithoutAllParamsException {
+    public Item saveItem(@Valid @RequestBody Item item) throws ItemWithoutAllParamsException {
         logger.info("ItemController.saveItem(): " + item.toString());
         Item item1 = itemService.getItemById(item.getId());
         if (item.getItem() == null || item.getStatus() == null) {
