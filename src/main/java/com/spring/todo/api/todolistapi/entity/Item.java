@@ -2,6 +2,7 @@ package com.spring.todo.api.todolistapi.entity;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -9,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 
 // This class is used to define the structure of the table in the database and the fields in the table
 // it also defines the arguments to each item in the table
-
+@Hidden
 @Data
 @AllArgsConstructor
 @Entity

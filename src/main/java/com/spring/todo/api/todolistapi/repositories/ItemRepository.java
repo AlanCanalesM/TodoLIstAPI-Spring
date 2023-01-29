@@ -2,12 +2,15 @@ package com.spring.todo.api.todolistapi.repositories;
 
 import com.spring.todo.api.todolistapi.entity.Item;
 
+import io.swagger.v3.oas.annotations.Hidden;
+
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
 //This interface works as a repository to access the database with the Jpa's defined methods
 
+@Hidden
 public interface ItemRepository extends CrudRepository<Item, Integer> {
 
     // This method is used to get the item by status from the database using GET
@@ -19,5 +22,7 @@ public interface ItemRepository extends CrudRepository<Item, Integer> {
     public Item findById(int id);
 
     public String deleteById(int id);
+
+   
 
 }

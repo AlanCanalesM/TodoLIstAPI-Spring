@@ -173,7 +173,7 @@ public class TestItemController {
         // and if the status code is 200 == OK
         @Test
         public void testUpdateItem() throws Exception {
-                Item mockItem = new Item(1, "Test Item", "Test status");
+                Item mockItem = new Item(1,"Test Item", "Test status");
                 Item expectedItem = new Item(1, "Test Item Updated", "Test status Updated");
                 Mockito.when(itemService.updateItem(mockItem)).thenReturn(expectedItem);
                 RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/api/v1/items/updateItem")
@@ -194,7 +194,8 @@ public class TestItemController {
         @Test
         public void testDeleteItem() throws Exception {
                 Item mockItem = new Item(1, "Test Item", "Test status");
-                Mockito.when(itemService.deleteItem(1)).thenReturn(mockItem.getId() + " id item deleted");
+                Mockito.when(itemService.getItemById(1)).thenReturn(mockItem);
+                Mockito.when(itemService.deleteItem(1)).thenReturn("1 id item deleted");
                 RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/api/v1/items/deleteItem/1")
                                 .header("Authorization", "Bearer " + tokenAdmin)
                                 .accept(MediaType.APPLICATION_JSON);
@@ -202,6 +203,7 @@ public class TestItemController {
                 System.out.println(result.getResponse());
                 String expected = "1 id item deleted";
                 assertEquals(expected, result.getResponse().getContentAsString());
+
 
         }
 

@@ -22,9 +22,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import io.swagger.v3.oas.annotations.Hidden;
+
 // This class is used to store the user details in the database.
 // It implements the UserDetails interface which is used by Spring Security to store user details.
-
+@Hidden
 @Data
 @Builder
 @NoArgsConstructor

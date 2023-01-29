@@ -11,6 +11,10 @@ import org.springframework.security.core.AuthenticationException;
 import com.spring.todo.api.todolistapi.service.ItemService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
@@ -72,6 +76,13 @@ public class ItemController {
     }
 
     // POST
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Saved item successfully", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class)) }),
+            @ApiResponse(responseCode = "400", description = "Missing required fields or Item already exists", content = @Content),
+            @ApiResponse(responseCode = "401", description = "UnAuthorized, You have to get the token from /signin endpoint and paste it into Barear Token field", content = @Content)
+    })
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @PostMapping("/saveItems")
     public Item saveItem(@RequestBody Item item) throws ItemWithoutAllParamsException {
         logger.info("ItemController.saveItem(): " + item.toString());
@@ -88,6 +99,11 @@ public class ItemController {
     }
 
     // GET
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get all items successfully", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class)) }),
+            @ApiResponse(responseCode = "401", description = "UnAuthorized, You have to get the token from /signin endpoint and paste it into Barear Token field", content = @Content)
+    })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @GetMapping("/getAllItems")
     public List<Item> getAllItems() {
@@ -98,6 +114,14 @@ public class ItemController {
         return itemService.getAllItems();
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get item successfully", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class)) }),
+            @ApiResponse(responseCode = "404", description = "Item not found", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Missing required field (id)", content = @Content),
+            @ApiResponse(responseCode = "401", description = "UnAuthorized, You have to get the token from /signin endpoint and paste it into Barear Token field", content = @Content)
+    })
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @GetMapping("/getItemById/{id}")
     public Item getItemById(@PathVariable int id) throws ItemNotFoundException {
 
@@ -109,6 +133,14 @@ public class ItemController {
 
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Get item successfully", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class)) }),
+            @ApiResponse(responseCode = "404", description = "Item not found", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Missing required field (status)", content = @Content),
+            @ApiResponse(responseCode = "401", description = "UnAuthorized, You have to get the token from /signin endpoint and paste it into Barear Token field", content = @Content)
+    })
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @GetMapping("/getItemByStatus/{status}")
     public List<Item> getItemByStatus(@PathVariable String status) throws ItemNotFoundException {
 
@@ -120,6 +152,14 @@ public class ItemController {
     }
 
     // PUT
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "item updated successfully", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class)) }),
+            @ApiResponse(responseCode = "404", description = "Item not found", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Missing required fields (id, item, status)", content = @Content),
+            @ApiResponse(responseCode = "401", description = "UnAuthorized, You have to get the token from /signin endpoint and paste it into Barear Token field", content = @Content)
+    })
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @PutMapping("/updateItem")
     public Item updateItem(@RequestBody Item item) throws ItemNotFoundException, ItemWithoutAllParamsException {
         System.out.println("Updated");
@@ -144,10 +184,19 @@ public class ItemController {
     }
 
     // DELETE
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "item deleted successfully", content = {
+                    @Content(mediaType = "application/json", schema = @Schema(implementation = Item.class)) }),
+            @ApiResponse(responseCode = "404", description = "Item not found", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Missing required field (id)", content = @Content),
+            @ApiResponse(responseCode = "401", description = "UnAuthorized, You have to get the token from /signin endpoint and paste it into Barear Token field", content = @Content)
+    })
+    @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @DeleteMapping("/deleteItem/{id}")
     public String deleteItem(@PathVariable int id) throws ItemNotFoundException {
 
-        if (itemService.deleteItem(id) == null) {
+       
+        if(itemService.getItemById(id) == null){
             throw new ItemNotFoundException("Item not found for this id :: " + id);
         }
         return itemService.deleteItem(id);

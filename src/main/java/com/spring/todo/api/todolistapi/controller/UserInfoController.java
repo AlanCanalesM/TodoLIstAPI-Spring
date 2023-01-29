@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.HashMap;
@@ -18,9 +19,10 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.http.ResponseEntity.ok;
 
 // This class is used to return the user information.
+@Hidden
 @RestController()
 @RequestMapping(UserInfoController.BASE_URL)
-@Tag(name = "book service", description = "the book API with description tag annotation")
+@Tag(name = "service", description = "the book API with description tag annotation")
 public class UserInfoController {
 
     public static final String BASE_URL = "/api/v1/items";
