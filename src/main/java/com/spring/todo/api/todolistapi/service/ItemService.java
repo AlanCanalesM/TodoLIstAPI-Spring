@@ -46,7 +46,7 @@ public class ItemService {
 
     // This method updates the item in the database using PUT Method
     public Item updateItem(Item item) {
-        System.out.println("Updated");
+        logger.info("Updated");
         Item itemToUpdate = itemRepository.findById(item.getId());
         itemToUpdate.setItem(item.getItem());
         itemToUpdate.setStatus(item.getStatus());
