@@ -64,16 +64,11 @@ public class SecurityConfig {
     // It returns an UsernamePasswordAuthenticationToken object
 
     @Bean
-    AuthenticationManager customAuthenticationManager(UserDetailsService userDetailsService, PasswordEncoder encoder) {
+    AuthenticationManager customAuthenticationManager(UserDetailsService userDetailsService) {
         return authentication -> {
             String username = authentication.getPrincipal() + "";
-            String password = authentication.getCredentials() + "";
 
             UserDetails user = userDetailsService.loadUserByUsername(username);
-
-            if (!encoder.matches(password, user.getPassword())) {
-                throw new BadCredentialsException("Bad credentials");
-            }
 
             if (!user.isEnabled()) {
                 throw new DisabledException("User account is not active");

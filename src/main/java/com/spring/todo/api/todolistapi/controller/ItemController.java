@@ -17,6 +17,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashMap;
@@ -124,7 +126,7 @@ public class ItemController {
     })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @GetMapping("/getItemById/{id}")
-    public Item getItemById(@PathVariable int id) throws ItemNotFoundException {
+    public Item getItemById(@PathVariable("id") @NotNull @Pattern(regexp = "^[0-9]$", message = "Id must be a number") int id) throws ItemNotFoundException {
 
         Item item = itemService.getItemById(id);
         if (item == null) {
@@ -143,7 +145,7 @@ public class ItemController {
     })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @GetMapping("/getItemByStatus/{status}")
-    public List<Item> getItemByStatus(@PathVariable String status) throws ItemNotFoundException {
+    public List<Item> getItemByStatus(@PathVariable("status") @NotNull @Pattern(regexp = "[a-zA-Z]*", message = "status can only have numbers") String status) throws ItemNotFoundException {
 
         List<Item> item = itemService.getItemByStatus(status);
         if (item.isEmpty()) {
@@ -162,16 +164,12 @@ public class ItemController {
     })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @PutMapping("/updateItem")
-    public Item updateItem(@RequestBody Item item) throws ItemNotFoundException, ItemWithoutAllParamsException {
-        System.out.println("Updated");
+    public Item updateItem(@Valid @RequestBody Item item) throws ItemNotFoundException, ItemWithoutAllParamsException {
+        logger.info("Item Updated");
         if (item.getId() == 0 || item.getItem() == null || item.getStatus() == null) {
             throw new ItemWithoutAllParamsException("Bad Request");
         } else {
 
-            // if (itemService.updateItem(item) == null) {
-            // throw new ItemNotFoundException("Item not found for this id :: " +
-            // item.getId());
-            // }
             try {
                 Item itemupdated = itemService.updateItem(item);
                 return itemupdated;
@@ -194,10 +192,9 @@ public class ItemController {
     })
     @Operation(security = { @SecurityRequirement(name = "bearer-key") })
     @DeleteMapping("/deleteItem/{id}")
-    public String deleteItem(@PathVariable int id) throws ItemNotFoundException {
+    public String deleteItem(@PathVariable("id") @NotNull @Pattern(regexp = "^[0-9]$", message = "Id must be a number") int id) throws ItemNotFoundException {
 
-       
-        if(itemService.getItemById(id) == null){
+        if (itemService.getItemById(id) == null) {
             throw new ItemNotFoundException("Item not found for this id :: " + id);
         }
         return itemService.deleteItem(id);

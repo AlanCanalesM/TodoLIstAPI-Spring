@@ -7,6 +7,8 @@ import com.spring.todo.api.todolistapi.service.ItemService;
 import org.mockito.Mockito;
 import com.spring.todo.api.todolistapi.entity.Item;
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -46,6 +48,7 @@ public class TestItemController {
         @MockBean
         private ItemService itemService;
 
+        Logger logger = LoggerFactory.getLogger(TestItemController.class);
         String tokenUser;
         String tokenAdmin;
         String invalidTestToken = "invalidToken";
@@ -103,7 +106,7 @@ public class TestItemController {
                                 .contentType(MediaType.APPLICATION_JSON);
                 MvcResult result = mockMvc.perform(requestBuilder).andReturn();
                 MockHttpServletResponse response = result.getResponse();
-                System.out.println(result.getResponse());
+                logger.info(result.getResponse().getContentAsString());
                 String expected = ObjectMapper.writeValueAsString(mockItem);
                 JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
                 assertEquals(HttpStatus.OK.value(), response.getStatus());
@@ -122,7 +125,7 @@ public class TestItemController {
                                 .accept(MediaType.APPLICATION_JSON);
 
                 MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                System.out.println(result.getResponse());
+                logger.info(result.getResponse().getContentAsString());
                 String expected = "[{\"id\":1,\"item\":\"Test Item\",\"status\":\"Test status\"}]";
                 JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
         }
@@ -140,7 +143,7 @@ public class TestItemController {
                                 .accept(MediaType.APPLICATION_JSON);
 
                 MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                System.out.println(result.getResponse());
+                logger.info(result.getResponse().getContentAsString());
                 String expected = "{\"id\":1,\"item\":\"Test Item\",\"status\":\"Test status\"}";
                 JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(),
                                 false);
@@ -160,7 +163,7 @@ public class TestItemController {
                                 .header("Authorization", "Bearer " + tokenUser)
                                 .accept(MediaType.APPLICATION_JSON);
                 MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                System.out.println(result.getResponse());
+                logger.info(result.getResponse().getContentAsString());
                 String expected = "[{\"id\":1,\"item\":\"Test Item\",\"status\":\"Test status\"}]";
                 JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(),
                                 false);
@@ -183,7 +186,7 @@ public class TestItemController {
                                 .contentType(MediaType.APPLICATION_JSON);
                 MvcResult result = mockMvc.perform(requestBuilder).andReturn();
                 MockHttpServletResponse response = result.getResponse();
-                System.out.println(result.getResponse());
+                logger.info(result.getResponse().getContentAsString());
                 assertEquals(HttpStatus.OK.value(), response.getStatus());
         }
 
@@ -200,7 +203,7 @@ public class TestItemController {
                                 .header("Authorization", "Bearer " + tokenAdmin)
                                 .accept(MediaType.APPLICATION_JSON);
                 MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-                System.out.println(result.getResponse());
+                logger.info(result.getResponse().getContentAsString());
                 String expected = "1 id item deleted";
                 assertEquals(expected, result.getResponse().getContentAsString());
 

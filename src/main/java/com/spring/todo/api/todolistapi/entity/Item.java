@@ -28,12 +28,12 @@ public class Item {
 
     @NotNull(message = "Item cannot be null")
     @Column(name = "item")
-    @Pattern(regexp = "[a-zA-Z]*", message = "Name can only have letters")
+    @Pattern(regexp = "[a-zA-Z]*", message = "Item can only have letters and no spaces")
     private String item;
 
     @NotNull(message = "Status cannot be null")
     @Column(name = "status")
-    @Pattern(regexp = "[a-zA-Z]*", message = "Name can only have letters")
+    @Pattern(regexp = "^[0-1]$", message = "Status must be a number 1 (Active) or 0 (Inactive) ")
     private String status;
 
     // This is a default constructor

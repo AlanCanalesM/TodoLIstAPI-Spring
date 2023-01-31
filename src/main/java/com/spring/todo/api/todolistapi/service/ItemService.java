@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.spring.todo.api.todolistapi.repositories.ItemRepository;
@@ -15,12 +17,14 @@ import com.spring.todo.api.todolistapi.entity.Item;
 @Service
 public class ItemService {
 
+    Logger logger = LoggerFactory.getLogger(ItemService.class);
+
     @Autowired
     private ItemRepository itemRepository;
 
     // This method is used to save the item in the database using POST Method
     public Item saveItem(Item item) {
-        System.out.println("ItemService.saveItem(): " + item.toString());
+        logger.info("ItemService.saveItem(): " + item.toString());
         return itemRepository.save(item);
     }
 
